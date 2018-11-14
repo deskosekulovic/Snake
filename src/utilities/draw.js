@@ -7,8 +7,13 @@ const drawSnake = (ctx, snake) => {
   });
 };
 
+const drawFood = (ctx, x, y, color) => {
+  ctx.fillStyle = color;
+  ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+};
+
 const clear = (ctx, width, height) => {
   ctx.clearRect(0, 0, width * cellSize, height * cellSize);
 };
 
-export { drawSnake, clear };
+export { drawSnake, drawFood, clear };

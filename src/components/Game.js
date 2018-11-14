@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { moveResolver } from '../utilities/helper';
-import { drawSnake, clear } from '../utilities/draw';
+import { drawSnake, drawFood, clear } from '../utilities/draw';
 
 const cellSize = 20;
 
@@ -22,9 +22,12 @@ class Game extends Component {
     document.addEventListener('keydown', this.handleKeys);
     this.ctx = this.myRef.current.getContext('2d');
   }
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeys);
+    clearTimeout(this.timeout);
+  }
 
   handleKeys(e) {
-    console.log(e.keyCode);
     if (e.keyCode === 37 && this.direction !== 'right') this.direction = 'left';
     if (e.keyCode === 38 && this.direction !== 'down') this.direction = 'up';
     if (e.keyCode === 39 && this.direction !== 'left') this.direction = 'right';
@@ -34,14 +37,15 @@ class Game extends Component {
   }
 
   play() {
-    const { snake, width, height } = this.state;
+    const { snake, width, height, food } = this.state;
     const snakeHead = snake[0];
     const nextPosition = moveResolver(snakeHead.x, snakeHead.y, this.direction);
     let newSnake = [nextPosition, ...snake.slice(0, snake.length - 1)];
     clear(this.ctx, width, height);
+    drawFood(this.ctx, food.x, food.y, food.color);
     drawSnake(this.ctx, newSnake);
     this.moveSnake(newSnake);
-    setTimeout(this.play, 1000);
+    this.timeout = setTimeout(this.play, 1000);
   }
   moveSnake(newSnake) {
     this.setState({
