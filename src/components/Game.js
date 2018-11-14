@@ -1,11 +1,27 @@
 import React, { Component } from 'react';
 
+const cellSize = 20;
+
 class Game extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      width: 800,
+      height: 800,
+      snake: [{ x: 0, y: 0 }],
+      food: { x: -cellSize, y: -cellSize }
+    };
     this.myRef = React.createRef();
+    this.direction = 'right';
   }
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeys);
+  }
+
+  handleKeys(e) {
+    console.log(e.keyCode);
+  }
+
   render() {
     return (
       <div>
