@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { moveResolver } from '../utilities/helper';
-import { drawSnake, drawFood, clear } from '../utilities/draw';
-
-const cellSize = 20;
+import { moveResolver, checkCollision } from '../utilities/helper';
+import { drawSnake, drawFood, drawResult, clear } from '../utilities/draw';
 
 class Game extends Component {
   constructor(props) {
@@ -10,12 +8,14 @@ class Game extends Component {
     this.state = {
       width: 40,
       height: 40,
-      snake: [{ x: -1, y: 0 }],
+      snake: [{ x: 0, y: 0 }],
       food: {
         x: Math.floor(Math.random() * 40),
         y: Math.floor(Math.random() * 40),
         color: 'green'
-      }
+      },
+      score: 0,
+      walls: true
     };
     this.myRef = React.createRef();
     this.direction = 'right';
@@ -41,14 +41,20 @@ class Game extends Component {
   }
 
   play() {
-    const { snake, width, height, food } = this.state;
+    const { snake, width, height, food, walls } = this.state;
     const snakeHead = snake[0];
     const nextPosition = moveResolver(snakeHead.x, snakeHead.y, this.direction);
-    clear(this.ctx, width, height);
-    drawFood(this.ctx, food.x, food.y, food.color);
-    drawSnake(this.ctx, nextPosition, snake);
-    this.moveSnake(nextPosition);
-    this.timeout = setTimeout(this.play, 1000);
+
+    if (checkCollision(snakeHead, snake, width, height, walls)) {
+      this.gameOver();
+      return;
+    } else {
+      clear(this.ctx, width, height);
+      drawFood(this.ctx, food.x, food.y, food.color);
+      drawSnake(this.ctx, nextPosition, snake);
+      this.moveSnake(nextPosition);
+      this.timeout = setTimeout(this.play, 1000);
+    }
   }
   moveSnake(nextPosition) {
     const { snake, food } = this.state;
@@ -83,14 +89,19 @@ class Game extends Component {
       }
     });
   }
+  gameOver() {
+    clearTimeout(this.timeout);
+    drawResult(this.ctx, 40, this.state.score);
+  }
 
   render() {
-    console.log(this.state);
+    const { score } = this.state;
+    console.log(this.state.snake);
     return (
       <div>
         <div style={{ padding: '10px', fontSize: '18px' }}>
           <h3>
-            Result: <span />
+            Result: <span>{score}</span>
           </h3>
         </div>
         <canvas
