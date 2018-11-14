@@ -13,12 +13,12 @@ class Game extends Component {
     };
     this.myRef = React.createRef();
     this.direction = 'right';
+    this.play = this.play.bind(this);
+    this.handleKeys = this.handleKeys.bind(this);
   }
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeys);
-    let ctx = this.myRef.current.getContext('2d');
-    ctx.fillStyle = '#FF0000';
-    ctx.fillRect(30, 30, 20, 20);
+    this.play();
   }
 
   handleKeys(e) {
@@ -29,7 +29,56 @@ class Game extends Component {
     if (e.keyCode === 40 && this.direction !== 'up') this.direction = 'down';
   }
 
+  play() {
+    const { snake } = this.state;
+    console.log(this.direction);
+    switch (this.direction) {
+    case 'left':
+      this.setState({
+        snake: snake.map(cell => ({ x: cell.x - cellSize, y: cell.y }))
+      });
+      break;
+    case 'up':
+      this.setState({
+        snake: snake.map(cell => ({ x: cell.x, y: cell.y - cellSize }))
+      });
+      break;
+    case 'right':
+      this.setState({
+        snake: snake.map(cell => ({ x: cell.x + cellSize, y: cell.y }))
+      });
+      break;
+    case 'down':
+      this.setState({
+        snake: snake.map(cell => ({ x: cell.x, y: cell.y + cellSize }))
+      });
+      break;
+    }
+    this.clear();
+    this.drawSnake();
+
+    setTimeout(this.play, 500);
+  }
+
+  drawSnake() {
+    let ctx = this.myRef.current.getContext('2d');
+    this.state.snake.map(cell => {
+      ctx.fillStyle = '#FF0000';
+      ctx.fillRect(cell.x, cell.y, cellSize, cellSize);
+    });
+  }
+  drawFood(x, y) {
+    let ctx = this.myRef.current.getContext('2d');
+    ctx.fillStyle = 'green';
+    ctx.fillRect(x, y, cellSize, cellSize);
+  }
+  clear() {
+    let ctx = this.myRef.current.getContext('2d');
+    ctx.clearRect(0, 0, this.state.width, this.state.height);
+  }
+
   render() {
+    console.log(this.state);
     return (
       <div>
         <div style={{ padding: '10px', fontSize: '18px' }}>
