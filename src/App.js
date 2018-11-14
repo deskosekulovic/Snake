@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
+import { ThemeProvider } from 'styled-components';
+import GlobalStyle, { theme } from './styles/';
+import StyledApp from './styles/StyledApp';
 
 class App extends Component {
   render() {
     return (
-      <div>
-        <h1>Snake game</h1>
-      </div>
+      <ThemeProvider theme={theme}>
+        <StyledApp>
+          <GlobalStyle />
+        </StyledApp>
+      </ThemeProvider>
     );
   }
 }
