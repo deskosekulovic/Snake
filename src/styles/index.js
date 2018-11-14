@@ -13,5 +13,6 @@ export default createGlobalStyle`
 
 export const theme = {
   fontSize: '18px',
-  color: 'white'
+  color: 'white',
+  navigationBackground: '#023862'
 };
