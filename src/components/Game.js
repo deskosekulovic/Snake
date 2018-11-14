@@ -10,8 +10,12 @@ class Game extends Component {
     this.state = {
       width: 40,
       height: 40,
-      snake: [{ x: 0, y: 0 }],
-      food: { x: -cellSize, y: -cellSize }
+      snake: [{ x: -1, y: 0 }],
+      food: {
+        x: Math.floor(Math.random() * 40),
+        y: Math.floor(Math.random() * 40),
+        color: 'green'
+      }
     };
     this.myRef = React.createRef();
     this.direction = 'right';
@@ -50,6 +54,18 @@ class Game extends Component {
   moveSnake(newSnake) {
     this.setState({
       snake: newSnake
+    });
+  }
+  spawnFood() {
+    const foodX = Math.floor(Math.random() * 40);
+    const foodY = Math.floor(Math.random() * 40);
+    drawFood(this.ctx, foodX, foodY, 'green');
+    this.setState({
+      food: {
+        x: foodX,
+        y: foodY,
+        color: 'green'
+      }
     });
   }
 
