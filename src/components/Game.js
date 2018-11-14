@@ -9,10 +9,15 @@ import { drawSnake, drawFood, drawResult, clear } from '../utilities/draw';
 class Game extends Component {
   constructor(props) {
     super(props);
-    this.state = {
+    this.initData = {
       width: 40,
       height: 40,
-      snake: [{ x: 0, y: 0 }],
+      snake: [
+        {
+          x: Math.floor(40 / 2),
+          y: Math.floor(40 / 2)
+        }
+      ],
       food: {
         x: Math.floor(Math.random() * 40),
         y: Math.floor(Math.random() * 40),
@@ -22,6 +27,9 @@ class Game extends Component {
       walls: true,
       steps: [],
       speed: 100
+    };
+    this.state = {
+      ...this.initData
     };
     this.myRef = React.createRef();
     this.direction = 'right';
@@ -40,16 +48,22 @@ class Game extends Component {
   }
 
   handleKeys(e) {
+    if (!this.blockKeys) {
+      if (e.keyCode === 13) {
+        this.resetGame();
+        this.play();
+      }
+      if (e.keyCode === 82) this.startReplay();
+    }
+
     if (e.keyCode === 37 && this.direction !== 'right') this.direction = 'left';
     if (e.keyCode === 38 && this.direction !== 'down') this.direction = 'up';
     if (e.keyCode === 39 && this.direction !== 'left') this.direction = 'right';
     if (e.keyCode === 40 && this.direction !== 'up') this.direction = 'down';
-
-    if (e.keyCode === 13) this.play();
-    if (e.keyCode === 82) this.startReplay();
   }
 
   play() {
+    this.blockKeys = true;
     const { snake, width, height, food, walls, speed } = this.state;
     const snakeHead = snake[0];
     const nextPosition = moveResolver(
@@ -132,7 +146,7 @@ class Game extends Component {
     }, randomNumber);
   }
   startReplay() {
-    // this.blockKeys = true;
+    this.blockKeys = true;
     const { steps } = this.state;
     if (steps.length > 0) {
       this.replay = true;
@@ -148,7 +162,7 @@ class Game extends Component {
             score: this.state.steps[i].score
           });
           let { food } = this.state.steps[i];
-          clear(this.ctx, 800, 800);
+          clear(this.ctx, 40, 40);
           drawFood(this.ctx, food.x, food.y, food.color);
           drawSnake(this.ctx, null, this.state.steps[i].snake, true);
         }
@@ -160,6 +174,15 @@ class Game extends Component {
     clearTimeout(this.timeout);
     clearInterval(this.interval);
     drawResult(this.ctx, 40, this.state.score);
+
+    this.blockKeys = false;
+  }
+  resetGame() {
+    clear(this.ctx, 40, 40);
+    this.replay = false;
+    this.setState({
+      ...this.initData
+    });
   }
 
   render() {
