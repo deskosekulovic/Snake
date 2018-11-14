@@ -16,10 +16,17 @@ class Game extends Component {
   }
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeys);
+    let ctx = this.myRef.current.getContext('2d');
+    ctx.fillStyle = '#FF0000';
+    ctx.fillRect(30, 30, 20, 20);
   }
 
   handleKeys(e) {
     console.log(e.keyCode);
+    if (e.keyCode === 37 && this.direction !== 'right') this.direction = 'left';
+    if (e.keyCode === 38 && this.direction !== 'down') this.direction = 'up';
+    if (e.keyCode === 39 && this.direction !== 'left') this.direction = 'right';
+    if (e.keyCode === 40 && this.direction !== 'up') this.direction = 'down';
   }
 
   render() {
@@ -32,8 +39,8 @@ class Game extends Component {
         </div>
         <canvas
           ref={this.myRef}
-          width="800px"
-          height="800px"
+          width="800"
+          height="800"
           style={{ border: '1px solid #000000', backgroundColor: 'black' }}
         />
       </div>
