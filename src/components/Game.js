@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { moveResolver } from '../utilities/helper';
+import { drawSnake, clear } from '../utilities/draw';
 
 const cellSize = 20;
 
@@ -19,6 +20,7 @@ class Game extends Component {
   }
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeys);
+    this.ctx = this.myRef.current.getContext('2d');
   }
 
   handleKeys(e) {
@@ -32,39 +34,19 @@ class Game extends Component {
   }
 
   play() {
-    const { snake } = this.state;
+    const { snake, width, height } = this.state;
     const snakeHead = snake[0];
     const nextPosition = moveResolver(snakeHead.x, snakeHead.y, this.direction);
-    console.log(nextPosition);
-    this.clear();
-    this.drawSnake(nextPosition);
-    this.moveSnake(nextPosition);
+    let newSnake = [nextPosition, ...snake.slice(0, snake.length - 1)];
+    clear(this.ctx, width, height);
+    drawSnake(this.ctx, newSnake);
+    this.moveSnake(newSnake);
     setTimeout(this.play, 1000);
   }
-  moveSnake(nextPosition) {
-    const { snake } = this.state;
+  moveSnake(newSnake) {
     this.setState({
-      snake: [nextPosition, ...snake.slice(0, snake.length - 1)]
+      snake: newSnake
     });
-  }
-
-  drawSnake(nextPosition) {
-    let ctx = this.myRef.current.getContext('2d');
-    const { snake } = this.state;
-    let newSnake = [nextPosition, ...snake.slice(0, snake.length - 1)];
-    newSnake.map(cell => {
-      ctx.fillStyle = '#FF0000';
-      ctx.fillRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize);
-    });
-  }
-  clear() {
-    let ctx = this.myRef.current.getContext('2d');
-    ctx.clearRect(
-      0,
-      0,
-      this.state.width * cellSize,
-      this.state.height * cellSize
-    );
   }
 
   render() {
