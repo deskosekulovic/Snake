@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
+import StyledNavigation, { MainNav } from '../styles/StyledNavigation';
 
 class Navigation extends Component {
   render() {
     return (
-      <nav>
-        <ul>
+      <StyledNavigation>
+        <MainNav>
           <li>
             <NavLink activeClassName="selected" exact to="/">
               Game
@@ -21,8 +22,8 @@ class Navigation extends Component {
               Top List
             </NavLink>
           </li>
-        </ul>
-      </nav>
+        </MainNav>
+      </StyledNavigation>
     );
   }
 }
