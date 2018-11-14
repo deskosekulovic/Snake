@@ -44,17 +44,32 @@ class Game extends Component {
     const { snake, width, height, food } = this.state;
     const snakeHead = snake[0];
     const nextPosition = moveResolver(snakeHead.x, snakeHead.y, this.direction);
-    let newSnake = [nextPosition, ...snake.slice(0, snake.length - 1)];
     clear(this.ctx, width, height);
     drawFood(this.ctx, food.x, food.y, food.color);
-    drawSnake(this.ctx, newSnake);
-    this.moveSnake(newSnake);
+    drawSnake(this.ctx, nextPosition, snake);
+    this.moveSnake(nextPosition);
     this.timeout = setTimeout(this.play, 1000);
   }
-  moveSnake(newSnake) {
+  moveSnake(nextPosition) {
+    const { snake, food } = this.state;
+    // checking if its going to eat food
+    if (nextPosition.x === food.x && nextPosition.y === food.y) {
+      this.ateFood(food.color);
+      this.setState({
+        snake: [nextPosition, ...snake]
+      });
+    } else {
+      this.setState({
+        snake: [nextPosition, ...snake.slice(0, snake.length - 1)]
+      });
+    }
+  }
+  ateFood() {
+    const { score } = this.state;
     this.setState({
-      snake: newSnake
+      score: score + 1
     });
+    this.spawnFood();
   }
   spawnFood() {
     const foodX = Math.floor(Math.random() * 40);
