@@ -1,4 +1,18 @@
-export const moveResolver = (x, y, direction) => {
+export const moveResolver = (x, y, direction, walls, size) => {
+  if (!walls) {
+    if (x === size - 1 && direction === 'right') {
+      x = -1;
+    }
+    if (x === 0 && direction === 'left') {
+      x = size;
+    }
+    if (y === 0 && direction === 'up') {
+      y = size;
+    }
+    if (y === size - 1 && direction === 'down') {
+      y = -1;
+    }
+  }
   switch (direction) {
   case 'left':
     return {
@@ -45,3 +59,9 @@ export const checkCollision = (nextPosition, snake, width, height, walls) => {
   }
   return IsOutOfArea || hitBody;
 };
+
+export function getRandomNumber(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
