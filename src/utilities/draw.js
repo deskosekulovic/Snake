@@ -1,6 +1,7 @@
 const cellSize = '20';
 
-const drawSnake = (ctx, snake) => {
+const drawSnake = (ctx, newPosition, oldPosition) => {
+  let snake = [newPosition, ...oldPosition.slice(0, oldPosition.length - 1)];
   snake.map(cell => {
     ctx.fillStyle = 'white';
     ctx.fillRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize);
