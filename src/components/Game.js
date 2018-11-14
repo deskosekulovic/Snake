@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { moveResolver } from '../utilities/helper';
 
 const cellSize = 20;
 
@@ -6,8 +7,8 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      width: 800,
-      height: 800,
+      width: 40,
+      height: 40,
       snake: [{ x: 0, y: 0 }],
       food: { x: -cellSize, y: -cellSize }
     };
@@ -18,7 +19,6 @@ class Game extends Component {
   }
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeys);
-    this.play();
   }
 
   handleKeys(e) {
@@ -27,54 +27,44 @@ class Game extends Component {
     if (e.keyCode === 38 && this.direction !== 'down') this.direction = 'up';
     if (e.keyCode === 39 && this.direction !== 'left') this.direction = 'right';
     if (e.keyCode === 40 && this.direction !== 'up') this.direction = 'down';
+
+    if (e.keyCode === 13) this.play();
   }
 
   play() {
     const { snake } = this.state;
-    console.log(this.direction);
-    switch (this.direction) {
-    case 'left':
-      this.setState({
-        snake: snake.map(cell => ({ x: cell.x - cellSize, y: cell.y }))
-      });
-      break;
-    case 'up':
-      this.setState({
-        snake: snake.map(cell => ({ x: cell.x, y: cell.y - cellSize }))
-      });
-      break;
-    case 'right':
-      this.setState({
-        snake: snake.map(cell => ({ x: cell.x + cellSize, y: cell.y }))
-      });
-      break;
-    case 'down':
-      this.setState({
-        snake: snake.map(cell => ({ x: cell.x, y: cell.y + cellSize }))
-      });
-      break;
-    }
+    const snakeHead = snake[0];
+    const nextPosition = moveResolver(snakeHead.x, snakeHead.y, this.direction);
+    console.log(nextPosition);
     this.clear();
-    this.drawSnake();
-
-    setTimeout(this.play, 500);
+    this.drawSnake(nextPosition);
+    this.moveSnake(nextPosition);
+    setTimeout(this.play, 1000);
   }
-
-  drawSnake() {
-    let ctx = this.myRef.current.getContext('2d');
-    this.state.snake.map(cell => {
-      ctx.fillStyle = '#FF0000';
-      ctx.fillRect(cell.x, cell.y, cellSize, cellSize);
+  moveSnake(nextPosition) {
+    const { snake } = this.state;
+    this.setState({
+      snake: [nextPosition, ...snake.slice(0, snake.length - 1)]
     });
   }
-  drawFood(x, y) {
+
+  drawSnake(nextPosition) {
     let ctx = this.myRef.current.getContext('2d');
-    ctx.fillStyle = 'green';
-    ctx.fillRect(x, y, cellSize, cellSize);
+    const { snake } = this.state;
+    let newSnake = [nextPosition, ...snake.slice(0, snake.length - 1)];
+    newSnake.map(cell => {
+      ctx.fillStyle = '#FF0000';
+      ctx.fillRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize);
+    });
   }
   clear() {
     let ctx = this.myRef.current.getContext('2d');
-    ctx.clearRect(0, 0, this.state.width, this.state.height);
+    ctx.clearRect(
+      0,
+      0,
+      this.state.width * cellSize,
+      this.state.height * cellSize
+    );
   }
 
   render() {
