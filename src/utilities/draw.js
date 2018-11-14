@@ -13,8 +13,16 @@ const drawFood = (ctx, x, y, color) => {
   ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
 };
 
+const drawResult = (ctx, size, score) => {
+  ctx.font = `${size * 2}px Arial`;
+  ctx.fillStyle = 'red';
+  ctx.textAlign = 'center';
+  ctx.fillText('Game over!', size * 10, size * 8);
+  ctx.fillText(`Result: ${score}`, size * 10, size * 10);
+};
+
 const clear = (ctx, width, height) => {
   ctx.clearRect(0, 0, width * cellSize, height * cellSize);
 };
 
-export { drawSnake, drawFood, clear };
+export { drawSnake, drawFood, drawResult, clear };

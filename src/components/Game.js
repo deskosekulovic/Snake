@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { moveResolver } from '../utilities/helper';
-import { drawSnake, drawFood, clear } from '../utilities/draw';
+import { moveResolver, checkCollision } from '../utilities/helper';
+import { drawSnake, drawFood, drawResult, clear } from '../utilities/draw';
 
 class Game extends Component {
   constructor(props) {
@@ -8,13 +8,14 @@ class Game extends Component {
     this.state = {
       width: 40,
       height: 40,
-      snake: [{ x: -1, y: 0 }],
+      snake: [{ x: 0, y: 0 }],
       food: {
         x: Math.floor(Math.random() * 40),
         y: Math.floor(Math.random() * 40),
         color: 'green'
       },
-      score: 0
+      score: 0,
+      walls: true
     };
     this.myRef = React.createRef();
     this.direction = 'right';
@@ -95,6 +96,7 @@ class Game extends Component {
 
   render() {
     const { score } = this.state;
+    console.log(this.state.snake);
     return (
       <div>
         <div style={{ padding: '10px', fontSize: '18px' }}>
