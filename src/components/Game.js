@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   moveResolver,
   checkCollision,
@@ -6,6 +7,7 @@ import {
 } from '../utilities/helper';
 import { drawSnake, drawFood, drawResult, clear } from '../utilities/draw';
 
+const cellSize = 20;
 class Game extends Component {
   constructor(props) {
     super(props);
@@ -14,19 +16,19 @@ class Game extends Component {
       height: 40,
       snake: [
         {
-          x: Math.floor(40 / 2),
-          y: Math.floor(40 / 2)
+          x: Math.floor(this.props.size / 2),
+          y: Math.floor(this.props.size / 2)
         }
       ],
       food: {
-        x: Math.floor(Math.random() * 40),
-        y: Math.floor(Math.random() * 40),
+        x: Math.floor(Math.random() * this.props.size),
+        y: Math.floor(Math.random() * this.props.size),
         color: 'green'
       },
       score: 0,
       walls: true,
       steps: [],
-      speed: 100
+      speed: 50
     };
     this.state = {
       ...this.initData
@@ -49,32 +51,36 @@ class Game extends Component {
   }
 
   handleKeys(e) {
+    const { left, right, up, down, start, replay } = this.props;
     if (!this.blockKeys) {
-      if (e.keyCode === 13) {
+      if (e.keyCode === start) {
         this.resetGame();
         this.play();
       }
-      if (e.keyCode === 82) this.startReplay();
+      if (e.keyCode === replay) this.startReplay();
     }
-    if (e.keyCode === 37 && this.direction !== 'right') this.direction = 'left';
-    if (e.keyCode === 38 && this.direction !== 'down') this.direction = 'up';
-    if (e.keyCode === 39 && this.direction !== 'left') this.direction = 'right';
-    if (e.keyCode === 40 && this.direction !== 'up') this.direction = 'down';
+    if (e.keyCode === left && this.direction !== 'right')
+      this.direction = 'left';
+    if (e.keyCode === up && this.direction !== 'down') this.direction = 'up';
+    if (e.keyCode === right && this.direction !== 'left')
+      this.direction = 'right';
+    if (e.keyCode === down && this.direction !== 'up') this.direction = 'down';
   }
 
   play() {
     this.blockKeys = true;
-    const { snake, width, height, walls, speed } = this.state;
+    const { snake } = this.state;
+    const { size, walls, speed } = this.props;
     const snakeHead = snake[0];
     const nextPosition = moveResolver(
       snakeHead.x,
       snakeHead.y,
       this.direction,
       walls,
-      width
+      size
     );
 
-    if (checkCollision(snakeHead, snake, width, height, walls)) {
+    if (checkCollision(snakeHead, snake, size, size, walls)) {
       this.gameOver();
     } else {
       this.moveSnake(nextPosition);
@@ -82,7 +88,8 @@ class Game extends Component {
     }
   }
   moveSnake(nextPosition) {
-    const { snake, food, score, speed, width, height } = this.state;
+    const { snake, food, score } = this.state;
+    const { size, speed } = this.props;
     // checking if its going to eat food
     let addPoints = 0;
     let newPosition;
@@ -107,17 +114,18 @@ class Game extends Component {
         }
       ]
     });
-    clear(this.ctx, width, height);
+    clear(this.ctx, size, size);
     drawFood(this.ctx, food.x, food.y, food.color);
     drawSnake(this.ctx, newPosition);
   }
   spawnFood() {
+    const { size } = this.props;
     /**optional*************/
     let number = getRandomNumber(1, 100);
     let color = number < 10 ? 'blue' : 'green';
     /************************/
-    const foodX = Math.floor(Math.random() * 40);
-    const foodY = Math.floor(Math.random() * 40);
+    const foodX = Math.floor(Math.random() * size);
+    const foodY = Math.floor(Math.random() * size);
     this.setState({
       food: {
         x: foodX,
@@ -142,7 +150,7 @@ class Game extends Component {
             score: this.state.steps[i].score
           });
           let { food } = this.state.steps[i];
-          clear(this.ctx, 40, 40);
+          clear(this.ctx, this.props.size, this.props.size);
           drawFood(this.ctx, food.x, food.y, food.color);
           drawSnake(this.ctx, this.state.steps[i].snake);
         }
@@ -154,10 +162,10 @@ class Game extends Component {
     this.blockKeys = false;
     clearTimeout(this.timeout);
     clearInterval(this.interval);
-    drawResult(this.ctx, 40, this.state.score);
+    drawResult(this.ctx, this.props.size, this.state.score);
   }
   resetGame() {
-    clear(this.ctx, 40, 40);
+    clear(this.ctx, this.props.size, this.props.size);
     this.replay = false;
     this.setState({
       ...this.initData
@@ -166,6 +174,7 @@ class Game extends Component {
 
   render() {
     const { score } = this.state;
+    const { size } = this.props;
     return (
       <div>
         <div style={{ padding: '10px', fontSize: '18px' }}>
@@ -175,13 +184,25 @@ class Game extends Component {
         </div>
         <canvas
           ref={this.myRef}
-          width="800"
-          height="800"
+          width={size * cellSize}
+          height={size * cellSize}
           style={{ border: '1px solid #000000', backgroundColor: 'black' }}
         />
       </div>
     );
   }
 }
+
+Game.propTypes = {
+  left: PropTypes.number.isRequired,
+  right: PropTypes.number.isRequired,
+  up: PropTypes.number.isRequired,
+  down: PropTypes.number.isRequired,
+  start: PropTypes.number.isRequired,
+  replay: PropTypes.number.isRequired,
+  speed: PropTypes.number.isRequired,
+  walls: PropTypes.bool.isRequired,
+  size: PropTypes.string.isRequired
+};
 
 export default Game;
