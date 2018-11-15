@@ -33,6 +33,8 @@ class Game extends Component {
     };
     this.myRef = React.createRef();
     this.direction = 'right';
+    this.replay = false;
+    this.blockKeys = false;
     this.play = this.play.bind(this);
     this.handleKeys = this.handleKeys.bind(this);
     this.startReplay = this.startReplay.bind(this);
@@ -45,6 +47,7 @@ class Game extends Component {
     document.removeEventListener('keydown', this.handleKeys);
     clearTimeout(this.timeout);
     clearInterval(this.interval);
+    clearTimeout(this.timeout2);
   }
 
   handleKeys(e) {
@@ -76,7 +79,6 @@ class Game extends Component {
 
     if (checkCollision(snakeHead, snake, width, height, walls)) {
       this.gameOver();
-      return;
     } else {
       clear(this.ctx, width, height);
       drawFood(this.ctx, food.x, food.y, food.color);
@@ -89,7 +91,7 @@ class Game extends Component {
     const { snake, food, score, speed } = this.state;
     // checking if its going to eat food
     if (nextPosition.x === food.x && nextPosition.y === food.y) {
-      clearTimeout(this.timeout);
+      clearTimeout(this.timeout2);
       let addPoints = food.color === 'blue' ? 2 : 1;
       this.setState({
         snake: [nextPosition, ...snake],
@@ -121,29 +123,20 @@ class Game extends Component {
     }
   }
   spawnFood() {
+    let color = 'green';
+    /**optional*************/
+    let number = getRandomNumber(1, 100);
+    if (number < 10) color = 'blue';
+    /************************/
     const foodX = Math.floor(Math.random() * 40);
     const foodY = Math.floor(Math.random() * 40);
-    drawFood(this.ctx, foodX, foodY, 'green');
     this.setState({
       food: {
         x: foodX,
         y: foodY,
-        color: 'green'
+        color
       }
     });
-    let randomNumber = getRandomNumber(10000, 30000);
-    this.timeout = setTimeout(() => {
-      const foodX = Math.floor(Math.random() * 40);
-      const foodY = Math.floor(Math.random() * 40);
-      drawFood(this.ctx, foodX, foodY, 'blue');
-      this.setState({
-        food: {
-          x: foodX,
-          y: foodY,
-          color: 'blue'
-        }
-      });
-    }, randomNumber);
   }
   startReplay() {
     this.blockKeys = true;
@@ -172,6 +165,7 @@ class Game extends Component {
   }
   gameOver() {
     clearTimeout(this.timeout);
+    clearTimeout(this.timeout2);
     clearInterval(this.interval);
     drawResult(this.ctx, 40, this.state.score);
 
