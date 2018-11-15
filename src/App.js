@@ -28,7 +28,7 @@ class App extends Component {
   }
 
   handleKeyDown(e) {
-    const { left, right, up, down, start, replay } = this.state;
+    // prevent inputs have same keys
     let permit = true;
     Object.keys(this.state).map(key => {
       if (this.state[key] === e.keyCode && key !== e.target.name) {
@@ -52,14 +52,17 @@ class App extends Component {
 
   render() {
     const { speed, ...rest } = this.state;
-    console.log(this.state);
     return (
       <ThemeProvider theme={theme}>
         <StyledApp>
           <GlobalStyle />
           <Navigation />
           <Switch>
-            <Route exact path="/" component={() => <Game />} />
+            <Route
+              exact
+              path="/"
+              component={() => <Game speed={parseInt(speed, 10)} {...rest} />}
+            />
             <Route
               exact
               path="/settings"
