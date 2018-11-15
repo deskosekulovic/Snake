@@ -15,7 +15,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      size: '40',
+      size: '30',
       left: 37,
       right: 39,
       up: 38,
