@@ -6,6 +6,9 @@ import StyledSettings, {
   Block2,
   Block3
 } from '../styles/StyledSettings';
+import Select from '../styles/formElements/Select';
+import Checkbox from '../styles/formElements/Checkbox';
+import Slider from '../styles/formElements/Slider';
 
 class Settings extends Component {
   render() {
@@ -17,22 +20,25 @@ class Settings extends Component {
           <Block1>
             <label>
               <h3>Pick size</h3>
-              <span>
+              <Select>
                 <select value="" name="size">
                   <option value="40">Big</option>
                   <option value="30">Medium</option>
                   <option value="20">Small</option>
                 </select>
-              </span>
+              </Select>
             </label>
             <label>
-              <h3>Walls</h3>
-              <input type="checkbox" name="walls" checked="false" />
+              <Checkbox>
+                <h3>Walls</h3>
+                <input type="checkbox" name="walls" checked="false" />
+                <span className="checkmark" />
+              </Checkbox>
             </label>
           </Block1>
           <Block3>
             <h3>Speed: </h3>
-            <input type="range" min="10" max="100" step="10" name="speed" />
+            <Slider type="range" min="10" max="100" step="10" name="speed" />
           </Block3>
         </Form1>
         <hr />
