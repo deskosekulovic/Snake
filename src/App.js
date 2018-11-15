@@ -87,7 +87,13 @@ class App extends Component {
                 />
               )}
             />
-            <Route exact to="/toplist" component={() => <Toplist />} />
+            <Route
+              exact
+              to="/toplist"
+              component={() => (
+                <Toplist speed={parseInt(speed, 10)} {...rest} />
+              )}
+            />
           </Switch>
         </StyledApp>
       </ThemeProvider>
