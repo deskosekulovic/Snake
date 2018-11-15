@@ -1,18 +1,10 @@
 const cellSize = '20';
 
-const drawSnake = (ctx, newPosition, oldPosition, replay) => {
-  let snake = [newPosition, ...oldPosition.slice(0, oldPosition.length - 1)];
-  if (!replay) {
-    snake.map(cell => {
-      ctx.fillStyle = 'white';
-      ctx.fillRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize);
-    });
-  } else {
-    oldPosition.map(cell => {
-      ctx.fillStyle = 'white';
-      ctx.fillRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize);
-    });
-  }
+const drawSnake = (ctx, snake) => {
+  snake.map(cell => {
+    ctx.fillStyle = 'white';
+    ctx.fillRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize);
+  });
 };
 
 const drawFood = (ctx, x, y, color) => {

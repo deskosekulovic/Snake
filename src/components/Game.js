@@ -33,7 +33,6 @@ class Game extends Component {
     };
     this.myRef = React.createRef();
     this.direction = 'right';
-    this.replay = false;
     this.blockKeys = false;
     this.play = this.play.bind(this);
     this.handleKeys = this.handleKeys.bind(this);
@@ -47,7 +46,6 @@ class Game extends Component {
     document.removeEventListener('keydown', this.handleKeys);
     clearTimeout(this.timeout);
     clearInterval(this.interval);
-    clearTimeout(this.timeout2);
   }
 
   handleKeys(e) {
@@ -58,7 +56,6 @@ class Game extends Component {
       }
       if (e.keyCode === 82) this.startReplay();
     }
-
     if (e.keyCode === 37 && this.direction !== 'right') this.direction = 'left';
     if (e.keyCode === 38 && this.direction !== 'down') this.direction = 'up';
     if (e.keyCode === 39 && this.direction !== 'left') this.direction = 'right';
@@ -67,7 +64,7 @@ class Game extends Component {
 
   play() {
     this.blockKeys = true;
-    const { snake, width, height, food, walls, speed } = this.state;
+    const { snake, width, height, walls, speed } = this.state;
     const snakeHead = snake[0];
     const nextPosition = moveResolver(
       snakeHead.x,
@@ -80,53 +77,44 @@ class Game extends Component {
     if (checkCollision(snakeHead, snake, width, height, walls)) {
       this.gameOver();
     } else {
-      clear(this.ctx, width, height);
-      drawFood(this.ctx, food.x, food.y, food.color);
-      drawSnake(this.ctx, nextPosition, snake);
       this.moveSnake(nextPosition);
       this.timeout = setTimeout(this.play, speed);
     }
   }
   moveSnake(nextPosition) {
-    const { snake, food, score, speed } = this.state;
+    const { snake, food, score, speed, width, height } = this.state;
     // checking if its going to eat food
+    let addPoints = 0;
+    let newPosition;
+
     if (nextPosition.x === food.x && nextPosition.y === food.y) {
-      clearTimeout(this.timeout2);
-      let addPoints = food.color === 'blue' ? 2 : 1;
-      this.setState({
-        snake: [nextPosition, ...snake],
-        score: score + addPoints,
-        steps: [
-          ...this.state.steps,
-          {
-            snake: [...this.state.snake],
-            food: { ...this.state.food },
-            score: this.state.score,
-            speed
-          }
-        ]
-      });
+      addPoints = food.color === 'blue' ? 2 : 1;
+      newPosition = [nextPosition, ...snake];
       this.spawnFood();
     } else {
-      this.setState({
-        snake: [nextPosition, ...snake.slice(0, snake.length - 1)],
-        steps: [
-          ...this.state.steps,
-          {
-            snake: [...this.state.snake],
-            food: { ...this.state.food },
-            score: this.state.score,
-            speed
-          }
-        ]
-      });
+      newPosition = [nextPosition, ...snake.slice(0, snake.length - 1)];
     }
+    this.setState({
+      snake: newPosition,
+      score: score + addPoints,
+      steps: [
+        ...this.state.steps,
+        {
+          snake: newPosition,
+          food: { ...this.state.food },
+          score: this.state.score,
+          speed
+        }
+      ]
+    });
+    clear(this.ctx, width, height);
+    drawFood(this.ctx, food.x, food.y, food.color);
+    drawSnake(this.ctx, newPosition);
   }
   spawnFood() {
-    let color = 'green';
     /**optional*************/
     let number = getRandomNumber(1, 100);
-    if (number < 10) color = 'blue';
+    let color = number < 10 ? 'blue' : 'green';
     /************************/
     const foodX = Math.floor(Math.random() * 40);
     const foodY = Math.floor(Math.random() * 40);
@@ -142,7 +130,6 @@ class Game extends Component {
     this.blockKeys = true;
     const { steps } = this.state;
     if (steps.length > 0) {
-      this.replay = true;
       let i = 0;
       this.interval = setInterval(() => {
         if (i == steps.length) {
@@ -157,19 +144,17 @@ class Game extends Component {
           let { food } = this.state.steps[i];
           clear(this.ctx, 40, 40);
           drawFood(this.ctx, food.x, food.y, food.color);
-          drawSnake(this.ctx, null, this.state.steps[i].snake, true);
+          drawSnake(this.ctx, this.state.steps[i].snake);
         }
         i++;
       }, this.state.steps[i].speed);
     }
   }
   gameOver() {
+    this.blockKeys = false;
     clearTimeout(this.timeout);
-    clearTimeout(this.timeout2);
     clearInterval(this.interval);
     drawResult(this.ctx, 40, this.state.score);
-
-    this.blockKeys = false;
   }
   resetGame() {
     clear(this.ctx, 40, 40);
@@ -181,7 +166,6 @@ class Game extends Component {
 
   render() {
     const { score } = this.state;
-    console.log(this.state);
     return (
       <div>
         <div style={{ padding: '10px', fontSize: '18px' }}>
