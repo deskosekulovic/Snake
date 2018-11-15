@@ -28,8 +28,16 @@ class App extends Component {
   }
 
   handleKeyDown(e) {
+    const { left, right, up, down, start, replay } = this.state;
+    let permit = true;
+    Object.keys(this.state).map(key => {
+      if (this.state[key] === e.keyCode && key !== e.target.name) {
+        permit = false;
+        return permit;
+      }
+    });
     this.setState({
-      [e.target.name]: e.keyCode
+      [e.target.name]: permit ? e.keyCode : this.state[e.target.name]
     });
   }
 
