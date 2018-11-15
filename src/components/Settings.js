@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import StyledSettings, {
   Form1,
   Form2,
@@ -12,6 +13,7 @@ import Slider from '../styles/formElements/Slider';
 
 class Settings extends Component {
   render() {
+    const { handleChange, handleKeyDown, size, walls, speed } = this.props;
     return (
       <StyledSettings>
         <h1>Welcome to settings!</h1>
@@ -21,7 +23,7 @@ class Settings extends Component {
             <label>
               <h3>Pick size</h3>
               <Select>
-                <select value="" name="size">
+                <select value={size} name="size" onChange={handleChange}>
                   <option value="40">Big</option>
                   <option value="30">Medium</option>
                   <option value="20">Small</option>
@@ -31,16 +33,29 @@ class Settings extends Component {
             <label>
               <Checkbox>
                 <h3>Walls</h3>
-                <input type="checkbox" name="walls" checked="false" />
+                <input
+                  type="checkbox"
+                  name="walls"
+                  checked={walls}
+                  onChange={handleChange}
+                />
                 <span className="checkmark" />
               </Checkbox>
             </label>
           </Block1>
           <Block3>
             <label>
-              <Slider type="range" min="10" max="100" step="10" name="speed" />
+              <Slider
+                type="range"
+                min="10"
+                max="100"
+                step="10"
+                name="speed"
+                value={speed}
+                onChange={handleChange}
+              />
             </label>
-            <h3>Speed: </h3>
+            <h3>Speed: {speed}</h3>
           </Block3>
         </Form1>
         <hr />
@@ -50,7 +65,13 @@ class Settings extends Component {
             {['left', 'right', 'up', 'down'].map(el => (
               <label key={el}>
                 <h3>{el}</h3>
-                <input type="text" name={el} value="" />
+                <input
+                  type="text"
+                  name={el}
+                  value={this.props[el]}
+                  onChange={handleChange}
+                  onKeyDown={handleKeyDown}
+                />
               </label>
             ))}
           </Block1>
@@ -58,7 +79,13 @@ class Settings extends Component {
             {['start', 'replay'].map(el => (
               <label key={el}>
                 <h3>{el}</h3>
-                <input type="text" name={el} value="" />
+                <input
+                  type="text"
+                  name={el}
+                  value={this.props[el]}
+                  onChange={handleChange}
+                  onKeyDown={handleKeyDown}
+                />
               </label>
             ))}
           </Block2>
@@ -67,5 +94,13 @@ class Settings extends Component {
     );
   }
 }
+
+Settings.propTypes = {
+  handleChange: PropTypes.func.isRequired,
+  handleKeyDown: PropTypes.func.isRequired,
+  size: PropTypes.string.isRequired,
+  walls: PropTypes.bool.isRequired,
+  speed: PropTypes.number.isRequired
+};
 
 export default Settings;
