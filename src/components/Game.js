@@ -6,6 +6,7 @@ import {
   getRandomNumber
 } from '../utilities/helper';
 import { drawSnake, drawFood, drawResult, clear } from '../utilities/draw';
+import { saveData } from '../utilities/store';
 
 const cellSize = 20;
 class Game extends Component {
@@ -163,6 +164,12 @@ class Game extends Component {
     clearTimeout(this.timeout);
     clearInterval(this.interval);
     drawResult(this.ctx, this.props.size, this.state.score);
+
+    if (!this.replay) {
+      let name = prompt('Unesite ime', '');
+      name = name && name.trim().length > 0 ? name : 'Neznani junak';
+      saveData(name, this.state.score, this.props.speed, this.props.size);
+    }
   }
   resetGame() {
     clear(this.ctx, this.props.size, this.props.size);

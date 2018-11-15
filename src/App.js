@@ -9,6 +9,8 @@ import { ThemeProvider } from 'styled-components';
 import GlobalStyle, { theme } from './styles/';
 import StyledApp from './styles/StyledApp';
 
+import { saveSettings, getDataSettings } from './utilities/store';
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -25,6 +27,16 @@ class App extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+  }
+
+  componentDidMount() {
+    let gameSettings = getDataSettings('settings');
+    this.setState({
+      ...gameSettings
+    });
+  }
+  componentDidUpdate() {
+    saveSettings({ ...this.state });
   }
 
   handleKeyDown(e) {
@@ -75,7 +87,13 @@ class App extends Component {
                 />
               )}
             />
-            <Route exact to="/toplist" component={() => <Toplist />} />
+            <Route
+              exact
+              to="/toplist"
+              component={() => (
+                <Toplist speed={parseInt(speed, 10)} {...rest} />
+              )}
+            />
           </Switch>
         </StyledApp>
       </ThemeProvider>
