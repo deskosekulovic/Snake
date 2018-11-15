@@ -15,5 +15,6 @@ export const theme = {
   fontSize: '18px',
   color: 'white',
   navigationBackground: '#023862',
-  formElementBackground: '#2196f3'
+  formElementBackground: '#2196f3',
+  border: '1px solid black'
 };
