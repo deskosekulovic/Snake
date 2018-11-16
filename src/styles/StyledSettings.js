@@ -3,6 +3,7 @@ import styled from 'styled-components';
 const StyledSettings = styled.div`
   display: grid;
   justify-content: center;
+  gap: 1em;
   max-width: 960px;
   margin-top: 20px;
   h3 {
@@ -17,10 +18,6 @@ const StyledSettings = styled.div`
   label {
     display: inline-block;
     text-align: end;
-  }
-  @media (min-width: 768px) {
-    grid-template-areas: 1fr 1fr;
-    gap: 1em;
   }
 `;
 

@@ -22,8 +22,8 @@ const drawResult = (ctx, size, score, cellSize) => {
   );
 };
 
-const clear = (ctx, width, height, cellSize) => {
-  ctx.clearRect(0, 0, width * cellSize, height * cellSize);
+const clear = (ctx, size, cellSize) => {
+  ctx.clearRect(0, 0, size * cellSize, size * cellSize);
 };
 
 export { drawSnake, drawFood, drawResult, clear };

@@ -115,7 +115,7 @@ class Game extends Component {
         }
       ]
     });
-    clear(this.ctx, size, size, this.cellSize);
+    clear(this.ctx, size, this.cellSize);
     drawFood(this.ctx, food.x, food.y, food.color, this.cellSize);
     drawSnake(this.ctx, newPosition, this.cellSize);
   }
@@ -134,7 +134,7 @@ class Game extends Component {
     if (steps.length > 0) {
       let i = 0;
       this.interval = setInterval(() => {
-        if (i == steps.length) {
+        if (i === steps.length) {
           this.gameOver();
         } else {
           this.setState({
@@ -144,7 +144,7 @@ class Game extends Component {
             score: this.state.steps[i].score
           });
           let { food } = this.state.steps[i];
-          clear(this.ctx, this.props.size, this.props.size, this.cellSize);
+          clear(this.ctx, this.props.size, this.cellSize);
           drawFood(this.ctx, food.x, food.y, food.color, this.cellSize);
           drawSnake(this.ctx, this.state.steps[i].snake, this.cellSize);
         }
@@ -165,7 +165,7 @@ class Game extends Component {
     }
   }
   resetGame() {
-    clear(this.ctx, this.props.size, this.props.size, this.cellSize);
+    clear(this.ctx, this.props.size, this.cellSize);
     this.replay = false;
     this.setState({
       ...this.initData,
@@ -178,11 +178,9 @@ class Game extends Component {
     const { size } = this.props;
     return (
       <div>
-        <div style={{ padding: '10px', fontSize: '18px' }}>
-          <h3>
-            Result: <span>{score}</span>
-          </h3>
-        </div>
+        <h3>
+          Result: <span>{score}</span>
+        </h3>
         <canvas
           ref={this.myRef}
           width={size * this.cellSize}
