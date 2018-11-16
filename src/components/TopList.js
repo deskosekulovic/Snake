@@ -7,14 +7,11 @@ import { getDataSettings } from '../utilities/store';
 class TopList extends Component {
   render() {
     const data = getDataSettings(this.props.size)[this.props.speed];
-    const sortedResults =
-      data &&
-      Object.keys(data)
-        .reverse()
-        .slice(0, 10);
+    let sortedData =
+      data && data.sort((a, b) => b.points - a.points).slice(0, 10);
     return (
       <StyledTopList>
-        {sortedResults && sortedResults.length > 0 ? (
+        {data && data.length > 0 ? (
           <React.Fragment>
             <h2>
               List for {this.props.size} unit grid for speed {this.props.speed}
@@ -26,13 +23,15 @@ class TopList extends Component {
                   <th>Name</th>
                   <th>Score</th>
                 </tr>
-                {sortedResults.map((rez, i) => (
-                  <tr key={i}>
-                    <td>{i + 1}</td>
-                    <td>{data[rez]}</td>
-                    <td>{rez}</td>
-                  </tr>
-                ))}
+                {sortedData.map((el, i) => {
+                  return (
+                    <tr key={i}>
+                      <td>{i + 1}</td>
+                      <td>{el.name}</td>
+                      <td>{el.points}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </Table>
           </React.Fragment>
