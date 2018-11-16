@@ -32,6 +32,7 @@ class Game extends Component {
     this.myRef = React.createRef();
     this.direction = 'right';
     this.blockKeys = false;
+    this.clickable = true;
     this.cellSize = Math.floor(
       Math.min(window.innerWidth, window.innerHeight - 110) / this.props.size
     );
@@ -53,6 +54,7 @@ class Game extends Component {
   }
   handleKeys(e) {
     const { left, right, up, down, start, replay } = this.props;
+
     if (!this.blockKeys) {
       if (e.keyCode === start) {
         this.resetGame();
@@ -60,16 +62,21 @@ class Game extends Component {
       }
       if (e.keyCode === replay) this.startReplay();
     }
-    if (e.keyCode === left && this.direction !== 'right')
-      this.direction = 'left';
-    if (e.keyCode === up && this.direction !== 'down') this.direction = 'up';
-    if (e.keyCode === right && this.direction !== 'left')
-      this.direction = 'right';
-    if (e.keyCode === down && this.direction !== 'up') this.direction = 'down';
+    if (this.clickable) {
+      if (e.keyCode === left && this.direction !== 'right')
+        this.direction = 'left';
+      if (e.keyCode === up && this.direction !== 'down') this.direction = 'up';
+      if (e.keyCode === right && this.direction !== 'left')
+        this.direction = 'right';
+      if (e.keyCode === down && this.direction !== 'up')
+        this.direction = 'down';
+    }
+    this.clickable = false;
   }
 
   play() {
     this.blockKeys = true;
+    this.clickable = true;
     const { snake } = this.state;
     const { size, walls, speed } = this.props;
     const snakeHead = snake[0];
