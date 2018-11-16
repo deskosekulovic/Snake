@@ -27,7 +27,7 @@ npm run build
 
 Game starts by pressing "Enter" on keyboard.
 
-By default, game is set to be played on medium grid size and speed with no walls.
+By default, game is set to be played on medium grid size and speed with no walls. Canvas size adapts to screen size on load by changing size of unit.
 On settings page is full list of game settings. You can choose between 3 grid sizes, big (40 units), medium (30 units) and small (20 units).
 
 At the beginning, snake is 1 unit size. Food is 1 unit size, green color. Sometimes, bonus food appears, also 1 unit size, but different color (blue) to indicate
