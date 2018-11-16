@@ -3,6 +3,7 @@ import styled from 'styled-components';
 const StyledTopList = styled.div`
   display: grid;
   max-width: 960px;
+  margin-top: 30px;
 `;
 
 export const Table = styled.table`

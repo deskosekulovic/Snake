@@ -14,27 +14,28 @@ class TopList extends Component {
         .slice(0, 10);
     return (
       <StyledTopList>
-        <h2>
-          List for {this.props.size} unit grid for speed {this.props.speed}
-        </h2>
-        <br />
         {sortedResults && sortedResults.length > 0 ? (
-          <Table>
-            <tbody>
-              <tr>
-                <th>No</th>
-                <th>Name</th>
-                <th>Score</th>
-              </tr>
-              {sortedResults.map((rez, i) => (
-                <tr key={i}>
-                  <td>{i + 1}</td>
-                  <td>{data[rez]}</td>
-                  <td>{rez}</td>
+          <React.Fragment>
+            <h2>
+              List for {this.props.size} unit grid for speed {this.props.speed}
+            </h2>
+            <Table>
+              <tbody>
+                <tr>
+                  <th>No</th>
+                  <th>Name</th>
+                  <th>Score</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+                {sortedResults.map((rez, i) => (
+                  <tr key={i}>
+                    <td>{i + 1}</td>
+                    <td>{data[rez]}</td>
+                    <td>{rez}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </React.Fragment>
         ) : (
           <h2>{'No results!'}</h2>
         )}

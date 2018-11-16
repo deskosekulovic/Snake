@@ -8,13 +8,10 @@ import {
 import { drawSnake, drawFood, drawResult, clear } from '../utilities/draw';
 import { saveData } from '../utilities/store';
 
-const cellSize = 20;
 class Game extends Component {
   constructor(props) {
     super(props);
     this.initData = {
-      width: 40,
-      height: 40,
       snake: [
         {
           x: Math.floor(this.props.size / 2),
@@ -27,9 +24,7 @@ class Game extends Component {
         color: 'green'
       },
       score: 0,
-      walls: true,
-      steps: [],
-      speed: 50
+      steps: []
     };
     this.state = {
       ...this.initData
@@ -37,6 +32,10 @@ class Game extends Component {
     this.myRef = React.createRef();
     this.direction = 'right';
     this.blockKeys = false;
+    this.cellSize = Math.floor(
+      Math.min(window.innerWidth, window.innerHeight - 110) / this.props.size
+    );
+    this.replay = false;
     this.play = this.play.bind(this);
     this.handleKeys = this.handleKeys.bind(this);
     this.startReplay = this.startReplay.bind(this);
@@ -44,13 +43,14 @@ class Game extends Component {
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeys);
     this.ctx = this.myRef.current.getContext('2d');
+    window.addEventListener('load', () => console.log('load'));
   }
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeys);
+    window.removeEventListener('load', () => console.log('bye'));
     clearTimeout(this.timeout);
     clearInterval(this.interval);
   }
-
   handleKeys(e) {
     const { left, right, up, down, start, replay } = this.props;
     if (!this.blockKeys) {
@@ -115,9 +115,9 @@ class Game extends Component {
         }
       ]
     });
-    clear(this.ctx, size, size);
-    drawFood(this.ctx, food.x, food.y, food.color);
-    drawSnake(this.ctx, newPosition);
+    clear(this.ctx, size, size, this.cellSize);
+    drawFood(this.ctx, food.x, food.y, food.color, this.cellSize);
+    drawSnake(this.ctx, newPosition, this.cellSize);
   }
   spawnFood() {
     const { size } = this.props;
@@ -137,6 +137,7 @@ class Game extends Component {
   }
   startReplay() {
     this.blockKeys = true;
+    this.replay = true;
     const { steps } = this.state;
     if (steps.length > 0) {
       let i = 0;
@@ -151,9 +152,9 @@ class Game extends Component {
             score: this.state.steps[i].score
           });
           let { food } = this.state.steps[i];
-          clear(this.ctx, this.props.size, this.props.size);
-          drawFood(this.ctx, food.x, food.y, food.color);
-          drawSnake(this.ctx, this.state.steps[i].snake);
+          clear(this.ctx, this.props.size, this.props.size, this.cellSize);
+          drawFood(this.ctx, food.x, food.y, food.color, this.cellSize);
+          drawSnake(this.ctx, this.state.steps[i].snake, this.cellSize);
         }
         i++;
       }, this.state.steps[i].speed);
@@ -163,7 +164,7 @@ class Game extends Component {
     this.blockKeys = false;
     clearTimeout(this.timeout);
     clearInterval(this.interval);
-    drawResult(this.ctx, this.props.size, this.state.score);
+    drawResult(this.ctx, this.props.size, this.state.score, this.cellSize);
 
     if (!this.replay) {
       let name = prompt('Unesite ime', '');
@@ -172,7 +173,7 @@ class Game extends Component {
     }
   }
   resetGame() {
-    clear(this.ctx, this.props.size, this.props.size);
+    clear(this.ctx, this.props.size, this.props.size, this.cellSize);
     this.replay = false;
     this.setState({
       ...this.initData
@@ -191,8 +192,8 @@ class Game extends Component {
         </div>
         <canvas
           ref={this.myRef}
-          width={size * cellSize}
-          height={size * cellSize}
+          width={size * this.cellSize}
+          height={size * this.cellSize}
           style={{ border: '1px solid #000000', backgroundColor: 'black' }}
         />
       </div>

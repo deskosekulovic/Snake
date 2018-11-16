@@ -4,8 +4,7 @@ const StyledSettings = styled.div`
   display: grid;
   justify-content: center;
   max-width: 960px;
-  grid-gap: 1em;
-  padding: 10px;
+  margin-top: 20px;
   h3 {
     display: inline-block;
     width: 90px;
