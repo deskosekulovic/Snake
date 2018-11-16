@@ -65,3 +65,18 @@ export function getRandomNumber(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+export function getFoodCoordinates(size, color) {
+  return {
+    x: Math.floor(Math.random() * size),
+    y: Math.floor(Math.random() * size),
+    color
+  };
+}
+
+export function getSnakeCoordinates(size) {
+  return {
+    x: Math.floor(size / 2),
+    y: Math.floor(size / 2)
+  };
+}

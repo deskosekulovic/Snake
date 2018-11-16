@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import {
   moveResolver,
   checkCollision,
-  getRandomNumber
+  getRandomNumber,
+  getFoodCoordinates,
+  getSnakeCoordinates
 } from '../utilities/helper';
 import { drawSnake, drawFood, drawResult, clear } from '../utilities/draw';
 import { saveData } from '../utilities/store';
@@ -12,17 +14,8 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.initData = {
-      snake: [
-        {
-          x: Math.floor(this.props.size / 2),
-          y: Math.floor(this.props.size / 2)
-        }
-      ],
-      food: {
-        x: Math.floor(Math.random() * this.props.size),
-        y: Math.floor(Math.random() * this.props.size),
-        color: 'green'
-      },
+      snake: [getSnakeCoordinates(this.props.size)],
+      food: getFoodCoordinates(this.props.size, 'green'),
       score: 0,
       steps: []
     };
@@ -128,18 +121,10 @@ class Game extends Component {
   }
   spawnFood() {
     const { size } = this.props;
-    /**optional*************/
-    let number = getRandomNumber(1, 100);
-    let color = number < 10 ? 'blue' : 'green';
-    /************************/
-    const foodX = Math.floor(Math.random() * size);
-    const foodY = Math.floor(Math.random() * size);
+    let color = getRandomNumber(1, 100) < 10 ? 'blue' : 'green';
+
     this.setState({
-      food: {
-        x: foodX,
-        y: foodY,
-        color
-      }
+      food: getFoodCoordinates(size, color)
     });
   }
   startReplay() {
@@ -183,7 +168,8 @@ class Game extends Component {
     clear(this.ctx, this.props.size, this.props.size, this.cellSize);
     this.replay = false;
     this.setState({
-      ...this.initData
+      ...this.initData,
+      food: getFoodCoordinates(this.props.size, 'green')
     });
   }
 
