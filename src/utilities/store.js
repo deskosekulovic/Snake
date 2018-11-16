@@ -11,12 +11,12 @@ export const saveSettings = ({ ...rest }) => {
 };
 
 export const saveData = (name, points, speed, size) => {
-  const columns = ((data || {})[size] || {})[speed];
+  const columns = ((data || {})[size] || {})[speed] || [];
   data = {
     ...data,
     [size]: {
       ...data[size],
-      [speed]: { ...columns, [points]: name }
+      [speed]: [...columns, { ['name']: name, ['points']: points }]
     }
   };
   localStorage.setItem('data', JSON.stringify(data));

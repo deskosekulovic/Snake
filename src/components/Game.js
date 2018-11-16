@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import {
   moveResolver,
   checkCollision,
-  getRandomNumber
+  getRandomNumber,
+  getFoodCoordinates,
+  getSnakeCoordinates
 } from '../utilities/helper';
 import { drawSnake, drawFood, drawResult, clear } from '../utilities/draw';
 import { saveData } from '../utilities/store';
@@ -12,17 +14,8 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.initData = {
-      snake: [
-        {
-          x: Math.floor(this.props.size / 2),
-          y: Math.floor(this.props.size / 2)
-        }
-      ],
-      food: {
-        x: Math.floor(Math.random() * this.props.size),
-        y: Math.floor(Math.random() * this.props.size),
-        color: 'green'
-      },
+      snake: [getSnakeCoordinates(this.props.size)],
+      food: getFoodCoordinates(this.props.size, 'green'),
       score: 0,
       steps: []
     };
@@ -122,24 +115,16 @@ class Game extends Component {
         }
       ]
     });
-    clear(this.ctx, size, size, this.cellSize);
+    clear(this.ctx, size, this.cellSize);
     drawFood(this.ctx, food.x, food.y, food.color, this.cellSize);
     drawSnake(this.ctx, newPosition, this.cellSize);
   }
   spawnFood() {
     const { size } = this.props;
-    /**optional*************/
-    let number = getRandomNumber(1, 100);
-    let color = number < 10 ? 'blue' : 'green';
-    /************************/
-    const foodX = Math.floor(Math.random() * size);
-    const foodY = Math.floor(Math.random() * size);
+    let color = getRandomNumber(1, 100) < 10 ? 'blue' : 'green';
+
     this.setState({
-      food: {
-        x: foodX,
-        y: foodY,
-        color
-      }
+      food: getFoodCoordinates(size, color)
     });
   }
   startReplay() {
@@ -149,7 +134,7 @@ class Game extends Component {
     if (steps.length > 0) {
       let i = 0;
       this.interval = setInterval(() => {
-        if (i == steps.length) {
+        if (i === steps.length) {
           this.gameOver();
         } else {
           this.setState({
@@ -159,7 +144,7 @@ class Game extends Component {
             score: this.state.steps[i].score
           });
           let { food } = this.state.steps[i];
-          clear(this.ctx, this.props.size, this.props.size, this.cellSize);
+          clear(this.ctx, this.props.size, this.cellSize);
           drawFood(this.ctx, food.x, food.y, food.color, this.cellSize);
           drawSnake(this.ctx, this.state.steps[i].snake, this.cellSize);
         }
@@ -180,10 +165,11 @@ class Game extends Component {
     }
   }
   resetGame() {
-    clear(this.ctx, this.props.size, this.props.size, this.cellSize);
+    clear(this.ctx, this.props.size, this.cellSize);
     this.replay = false;
     this.setState({
-      ...this.initData
+      ...this.initData,
+      food: getFoodCoordinates(this.props.size, 'green')
     });
   }
 
@@ -192,11 +178,9 @@ class Game extends Component {
     const { size } = this.props;
     return (
       <div>
-        <div style={{ padding: '10px', fontSize: '18px' }}>
-          <h3>
-            Result: <span>{score}</span>
-          </h3>
-        </div>
+        <h3>
+          Result: <span>{score}</span>
+        </h3>
         <canvas
           ref={this.myRef}
           width={size * this.cellSize}
